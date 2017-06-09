@@ -18,15 +18,9 @@ class GF_Field_Repeater_End extends GF_Field {
 	}
 
 	public function get_form_editor_field_settings() {
-		return apply_filters('gform_editor_repeater_end_field_settings',
-			array(
-				'css_class_setting'
-			)
+		return array(
+			'css_class_setting'
 		);
-	}
-
-	public function add_button($field_groups) {
-		return $field_groups;
 	}
 
 	public static function gform_standard_settings($position, $form_id) {
@@ -76,9 +70,9 @@ class GF_Field_Repeater_End extends GF_Field {
 	}
 
 	public static function gform_tooltips($tooltips) {
-		$tooltips['form_field_repeater_end_add'] = __( "The HTML to replace the default add button. This HTML will be placed inside of a span tag with the class 'gf_repeater_add'.", 'gravityformsrepeater' );
-		$tooltips['form_field_repeater_end_remove'] = __( "The HTML to replace the default remove button. This HTML will be placed inside of a span tag with the class 'gf_repeater_remove'.", 'gravityformsrepeater' );
-		$tooltips['form_field_repeater_end_hideButtons'] = __( "If enabled, no add and remove buttons will be displayed. This is useful if you plan on using custom javascript to trigger the repeater.", 'gravityformsrepeater' );
+		$tooltips['form_field_repeater_end_add'] = "The HTML to replace the default add button. This HTML will be placed inside of a span tag with the class 'gf_repeater_add'.";
+		$tooltips['form_field_repeater_end_remove'] = "The HTML to replace the default remove button. This HTML will be placed inside of a span tag with the class 'gf_repeater_remove'.";
+		$tooltips['form_field_repeater_end_hideButtons'] = "If enabled, no add and remove buttons will be displayed. This is useful if you plan on using custom javascript to trigger the repeater.";
 		return $tooltips;
 	}
 
@@ -104,8 +98,8 @@ class GF_Field_Repeater_End extends GF_Field {
 			$field_content = "<div class=\"ginput_container ginput_container_repeater-end\">\n";
 
 			if (!$hideButtons) {
-				$field_content .= "<span class=\"gf_repeater_remove\" {$tabindex}>{$remove_html}</span>";
 				$field_content .= "<span class=\"gf_repeater_add\" {$tabindex}>{$add_html}</span>";
+				$field_content .= "<span class=\"gf_repeater_remove\" {$tabindex}>{$remove_html}</span>";
 			}
 
 			$field_content .= "</div>";

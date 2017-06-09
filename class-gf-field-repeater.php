@@ -23,27 +23,14 @@ class GF_Field_Repeater extends GF_Field {
 		add_action('gform_enqueue_scripts', array('GF_Field_Repeater', 'gform_enqueue_scripts'), 10, 2);
 		add_filter('gform_pre_render', array('GF_Field_Repeater', 'gform_unhide_children_validation'));
 		add_filter('gform_pre_validation', array('GF_Field_Repeater', 'gform_bypass_children_validation'));
-		add_filter('gform_counter_script', array('GF_Field_Repeater', 'set_counter_script'), 10, 4);
 	}
 
 	public static function gform_enqueue_scripts($form, $is_ajax) {
 		if (!empty($form)) {
 			if (GF_Field_Repeater::get_field_index($form) !== false) {
-				wp_register_script('gforms_repeater_postcapture_js', plugins_url('js/jquery.postcapture.min.js', __FILE__), array('jquery'), '0.0.1');
-				wp_register_script('gforms_repeater_js', plugins_url('js/gf-repeater.js', __FILE__), array('jquery'), GF_REPEATER_VERSION);
-				wp_register_style('gforms_repeater_css', plugins_url('css/gf-repeater.css', __FILE__), array(), GF_REPEATER_VERSION);
-
-				wp_localize_script('gforms_repeater_js', 'gfRepeater_php', array('debug' => GF_REPEATER_DEBUG));
-
-				wp_localize_script('gforms_repeater_js', 'GF_Repeater_Phrases',
-					array(
-						'field_required'	=> __( 'This field is required.', 'gravityformsrepeater' ),
-					)
-				);
-
-				wp_enqueue_script('gforms_repeater_postcapture_js');
-				wp_enqueue_script('gforms_repeater_js');
-				wp_enqueue_style('gforms_repeater_css');
+				wp_enqueue_script('gforms_repeater_postcapture_js', plugins_url('js/jquery.postcapture.min.js', __FILE__), array('jquery'), '0.0.1');
+				wp_enqueue_script('gforms_repeater_js', plugins_url('js/gf-repeater.js', __FILE__), array('jquery'), GF_REPEATER_VERSION);
+				wp_enqueue_style('gforms_repeater_css', plugins_url('css/gf-repeater.css', __FILE__), array(), GF_REPEATER_VERSION);
 			}
 		}
 	}
@@ -53,33 +40,14 @@ class GF_Field_Repeater extends GF_Field {
 	}
 
 	public function get_form_editor_field_settings() {
-		return apply_filters('gform_editor_repeater_field_settings',
-			array(
-				'admin_label_setting',
-				'css_class_setting',
-				'description_setting',
-				'error_message_setting',
-				'label_setting',
-				'prepopulate_field_setting',
-				'conditional_logic_field_setting'
-			)
+		return array(
+			'admin_label_setting',
+			'css_class_setting',
+			'description_setting',
+			'error_message_setting',
+			'label_setting',
+			'prepopulate_field_setting'
 		);
-	}
-
-	public function add_button($field_groups) {
-		foreach ($field_groups as &$group) {
-			if ($group['name'] == 'advanced_fields') {
-				$group['fields'][] = array(
-					'class'     => 'button',
-					'data-type' => 'repeater',
-					'value'     => 'Repeater',
-					'onclick'   => "StartAddField('repeater');"
-				);
-				break;
-			}
-		}
-
-		return $field_groups;
 	}
 
 	public static function gform_set_defaults() {
@@ -124,15 +92,6 @@ class GF_Field_Repeater extends GF_Field {
 	public static function gform_appearance_settings($position, $form_id) {
 		if ($position == 400) {
 			echo "<li class=\"repeater_settings field_setting\">
-					<label for=\"field_repeater_animations\">Animation Properties ";
-
-			gform_tooltip('form_field_repeater_animations');
-
-			echo "	</label>
-					<input type=\"text\" id=\"field_repeater_animations\" class=\"fieldwidth-3\" onchange=\"SetFieldProperty('animations', this.value);\">
-				</li>";
-
-			echo "<li class=\"repeater_settings field_setting\">
 					<input type=\"checkbox\" id=\"field_repeater_hideLabel\" onchange=\"SetFieldProperty('hideLabel', this.checked);\"> 
 					<label for=\"field_repeater_hideLabel\" class=\"inline\">Hide Label & Description ";
 
@@ -150,18 +109,16 @@ class GF_Field_Repeater extends GF_Field {
 					jQuery('#field_repeater_start').val(field['start']);
 					jQuery('#field_repeater_min').val(field['min']);
 					jQuery('#field_repeater_max').val(field['max']);
-					jQuery('#field_repeater_animations').val(field['animations']);
 					jQuery('#field_repeater_hideLabel').prop('checked', field['hideLabel']);
 				});
 			</script>";
 	}
 
 	public static function gform_tooltips($tooltips) {
-		$tooltips['form_field_repeater_start'] = __( "The number of times the repeater will be repeated when the form is rendered. Leaving this field blank or setting it to a number higher than the maximum number is the same as setting it to 1.", 'gravityformsrepeater' );
-		$tooltips['form_field_repeater_min'] = __( "The minimum number of times the repeater is allowed to be repeated. Leaving this field blank or setting it to a number higher than the maximum field is the same as setting it to 1.", 'gravityformsrepeater' );
-		$tooltips['form_field_repeater_max'] = __( "The maximum number of times the repeater is allowed to be repeated. Leaving this field blank or setting it to a number lower than the minimum field is the same as setting it to unlimited.", 'gravityformsrepeater' );
-		$tooltips['form_field_repeater_animations'] = __( "A JavaScript object to be passed for animation settings. For advanced users only. Do not include initial brackets.", 'gravityformsrepeater' );
-		$tooltips['form_field_repeater_hideLabel'] = __( "If this is checked, the repeater label and description will not be shown to users on the form.", 'gravityformsrepeater' );
+		$tooltips['form_field_repeater_start'] = "The number of times the repeater will be repeated when the form is rendered. Leaving this field blank or setting it to a number higher than the maximum number is the same as setting it to 1.";
+		$tooltips['form_field_repeater_min'] = "The minimum number of times the repeater is allowed to be repeated. Leaving this field blank or setting it to a number higher than the maximum field is the same as setting it to 1.";
+		$tooltips['form_field_repeater_max'] = "The maximum number of times the repeater is allowed to be repeated. Leaving this field blank or setting it to a number lower than the minimum field is the same as setting it to unlimited.";
+		$tooltips['form_field_repeater_hideLabel'] = "If this is checked, the repeater label and description will not be shown to users on the form.";
 		return $tooltips;
 	}
 
@@ -183,31 +140,22 @@ class GF_Field_Repeater extends GF_Field {
 
 			if ($dataArray['repeatCount'] < $this->min) {
 				$this->failed_validation  = true;
-				$this->validation_message = sprintf( __( "A minimum number of %s is required.", 'gravityformsrepeater' ), $this->min );
+				$this->validation_message = "A minimum number of ".$this->min." is required.";
 				return;
 			}
 
 			if ($this->max && $dataArray['repeatCount'] > $this->max) {
 				$this->failed_validation  = true;
-				$this->validation_message = sprintf( __( "A maximum number of %s is allowed.", 'gravityformsrepeater' ), $this->max );
+				$this->validation_message = "A maximum number of ".$this->max." is allowed.";
 				return;
 			}
 
 			for ($i = 1; $i < $dataArray['repeatCount'] + 1; $i++) {
 				foreach ($dataArray['children'] as $field_id=>$field) {
-					$repeatSkips = array();
+					$inputNames = $field['inputs'];
+					$repeatSkips = $field['conditionalLogic']['skip'];
 
-					if (array_key_exists('conditionalLogic', $field)) {
-						if (is_array($field['conditionalLogic'])) {
-							if (array_key_exists('skip', $field['conditionalLogic'])) {
-								$repeatSkips = $field['conditionalLogic']['skip'];
-							}
-						}
-					}
-
-					if (array_key_exists('inputs', $field)) {
-						$inputNames = $field['inputs'];
-					} else { continue; }
+					if (!is_array($inputNames)) { continue; }
 
 					if (is_array($repeatSkips)) {
 						if (in_array($i, $repeatSkips) || in_array('all', $repeatSkips)) { continue; }
@@ -246,7 +194,7 @@ class GF_Field_Repeater extends GF_Field {
 
 							if ($failedValidation) {
 								$this->failed_validation  = true;
-								if ($this->errorMessage) { $this->validation_message = $this->errorMessage; } else { $this->validation_message = __( "A required field was left blank.", 'gravityformsrepeater' ); }
+								if ($this->errorMessage) { $this->validation_message = $this->errorMessage; } else { $this->validation_message = "A required field was left blank."; }
 								return;
 							}
 						}
@@ -278,23 +226,26 @@ class GF_Field_Repeater extends GF_Field {
 	}
 
 	public function get_field_input($form, $value = '', $entry = null) {
+
+
+		// echo "<textarea>".print_r($value,true)."</textarea>"; // debug
+
 		if (is_admin()) {
 			return '';
 		} else {
-			$form_id				= $form['id'];
-			$is_entry_detail		= $this->is_entry_detail();
-			$is_form_editor			= $this->is_form_editor();
-			$id						= (int) $this->id;
-			$field_id				= $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
-			$tabindex  				= $this->get_tabindex();
-			$repeater_id			= $this->repeaterId;
-			$repeater_parem			= $this->inputName;
-			$repeater_required		= $this->repeaterRequiredChildren;
-			$repeater_children		= $this->repeaterChildren;
-			$repeater_start			= apply_filters('gf_repeater_start', $this->start, $form, $this);
-			$repeater_min			= apply_filters('gf_repeater_min', $this->min, $form, $this);
-			$repeater_max			= apply_filters('gf_repeater_max', $this->max, $form, $this);
-			$repeater_animations	= apply_filters('gf_repeater_animations', $this->animations, $form, $this);
+			$form_id			= $form['id'];
+			$is_entry_detail	= $this->is_entry_detail();
+			$is_form_editor		= $this->is_form_editor();
+			$id					= (int) $this->id;
+			$field_id			= $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
+			$tabindex  			= $this->get_tabindex();
+			$repeater_parem		= $this->inputName;
+			$repeater_start		= $this->start;
+			$repeater_min		= $this->min;
+			$repeater_max		= $this->max;
+			$repeater_required	= $this->repeaterRequiredChildren;
+			$repeater_children	= $this->repeaterChildren;
+
 
 			if (!empty($repeater_parem)) {
 				$repeater_parem_value = GFFormsModel::get_parameter_value($repeater_parem, $value, $this);
@@ -315,31 +266,23 @@ class GF_Field_Repeater extends GF_Field {
 						}
 					}
 
+
 					if (!empty($repeater_parems)) {
+
 						if (array_key_exists($repeater_child, $repeater_parems)) {
 							$repeater_children_info[$repeater_child]['prePopulate'] = $repeater_parems[$repeater_child];
 						}
 					}
 
 					if ($repeater_child_field_index !== false) {
-						$repeater_child_field = $form['fields'][$repeater_child_field_index];
-
-						if ($repeater_child_field['inputMask']) {
-							$repeater_children_info[$repeater_child]['inputMask'] = $repeater_child_field['inputMaskValue'];
-						} elseif ($repeater_child_field['type'] == 'phone' && $repeater_child_field['phoneFormat'] = 'standard') {
+						if ($form['fields'][$repeater_child_field_index]['inputMask']) {
+							$repeater_children_info[$repeater_child]['inputMask'] = $form['fields'][$repeater_child_field_index]['inputMaskValue'];
+						} elseif ($form['fields'][$repeater_child_field_index]['type'] == 'phone' && $form['fields'][$repeater_child_field_index]['phoneFormat'] = 'standard') {
 							$repeater_children_info[$repeater_child]['inputMask'] = "(999) 999-9999";
 						}
 
-						if ($repeater_child_field['conditionalLogic']) {
-							$repeater_children_info[$repeater_child]['conditionalLogic'] = $repeater_child_field['conditionalLogic'];
-						}
-
-						if ($repeater_child_field['maxLength']) {
-							$repeater_children_info[$repeater_child]['maxLength'] = $repeater_child_field['maxLength'];
-						}
-
-						if ($repeater_child_field['enableEnhancedUI']) {
-							$repeater_children_info[$repeater_child]['enableEnhancedUI'] = $repeater_child_field['enableEnhancedUI'];
+						if ($form['fields'][$repeater_child_field_index]['conditionalLogic']) {
+							$repeater_children_info[$repeater_child]['conditionalLogic'] = $form['fields'][$repeater_child_field_index]['conditionalLogic'];
 						}
 					}
 				}
@@ -347,46 +290,122 @@ class GF_Field_Repeater extends GF_Field {
 				$repeater_children = $repeater_children_info;
 			}
 
-			$value = array();
-			$value['formId'] = $form_id;
-			if (!empty($repeater_start)) { $value['start'] = $repeater_start; }
-			if (!empty($repeater_min)) { $value['min'] = $repeater_min; }
-			if (!empty($repeater_max)) { $value['max'] = $repeater_max; }
-			if (!empty($repeater_children)) { $value['children'] = $repeater_children; }
-			$value = json_encode($value);
+			if (empty($value)) {
+				$value['formId'] = $form_id;
+				if (!empty($repeater_start)) { $value['start'] = $repeater_start; }
+				if (!empty($repeater_min)) { $value['min'] = $repeater_min; }
+				if (!empty($repeater_max)) { $value['max'] = $repeater_max; }
+				if (!empty($repeater_children)) { $value['children'] = $repeater_children; }
 
-			if (!empty($repeater_animations)) {
-				$animation_script = "var animations={".$repeater_animations."};jQuery.extend(true,gfRepeater_repeaters[".$form_id."][".$repeater_id."].settings.animations,animations);";
-				GFFormDisplay::add_init_script($form_id, 'repeater_animations', GFFormDisplay::ON_PAGE_RENDER, $animation_script);
+				$value = json_encode($value);
 			}
 
+
+
+			// pre-posted data on other pages - retrieve repeater data from other pages.
+
+			if ($value) {
+
+				$posted_field_data = json_decode($value);
+				$posted_field_data_withvals = $posted_field_data;
+
+				if (isset($posted_field_data->repeatCount)):
+
+					$pp = [];
+
+					foreach ($posted_field_data->children as $pfd_k => $pfd_v) {
+
+						for ($k = 1 ; $k < ($posted_field_data->repeatCount+1); $k++){
+
+							$field_name = "input_" . $pfd_k . "-" . $posted_field_data->repeaterId . "-" . $k;
+
+							if (isset($_REQUEST[$field_name])) {
+								$pp[$pfd_k]["prePopulate"][$pfd_k][$k] = $_REQUEST[$field_name];
+
+								// creating default object
+								if (!isset($posted_field_data_withvals->children)) $posted_field_data_withvals->children = new StdClass;
+								if (!isset($posted_field_data_withvals->children->$pfd_k)) $posted_field_data_withvals->children->$pfd_k = new StdClass;
+								if (!isset($posted_field_data_withvals->children->$pfd_k->prePopulate)) $posted_field_data_withvals->children->$pfd_k->prePopulate = new StdClass;
+								if (!isset($posted_field_data_withvals->children->$pfd_k->prePopulate->$pfd_k)) $posted_field_data_withvals->children->$pfd_k->prePopulate->$pfd_k = new StdClass;
+								if (!isset($posted_field_data_withvals->children->$pfd_k->prePopulate->$pfd_k->$k)) $posted_field_data_withvals->children->$pfd_k->prePopulate->$pfd_k->$k = new StdClass;
+
+								// add `prePopulate` child in object
+								$posted_field_data_withvals->children->$pfd_k->prePopulate->$pfd_k->$k = $_REQUEST[$field_name];
+							}
+
+						}
+
+					}
+
+					// re encode array to json
+					$value = json_encode($posted_field_data_withvals);
+
+				endif;
+
+			}
+
+
+			// incomplete submissions - retrieve repeater pre-filled values
+
+			if (isset($_REQUEST["gf_token"])) {
+
+				$resume_token = sanitize_key( $_REQUEST["gf_token"] );
+
+				$incomplete_submission_info = GFFormsModel::get_incomplete_submission_values( $resume_token );
+				$submission_details = json_decode( $incomplete_submission_info["submission"], true );
+				if ($submission_details["partial_entry"][$id])
+					$ics_repeater_vals = unserialize($submission_details["partial_entry"][$id]);
+
+
+				// decode json back to array so we can manipulate it
+				$value = json_decode($value);
+
+
+					// format array that gf-repeater.js expects
+					$arr_field_vals = [];
+					foreach ($ics_repeater_vals as $fv_k => $fv_v)
+						foreach ($fv_v as $fv_kc => $fv_vc) {
+							if (empty($fv_vc))continue;
+							$i = (isset($arr_field_vals[$fv_kc]) ? count($arr_field_vals[$fv_kc])+1 : 1);
+							$test = $fv_vc[0];
+							$arr_field_vals[$fv_kc][$fv_kc][$i] = $fv_vc[0];
+						}
+
+
+					// add `prePopulate` child in object
+					foreach ($value->children as $rp_k => $rp_v)
+						if (!empty($arr_field_vals[$rp_k])) $value->children->$rp_k->prePopulate = $arr_field_vals[$rp_k];
+
+
+				// re encode array to json
+				$value = json_encode($value);
+
+			}
+
+
+			// echo '<textarea style="background-color: orange">'.print_r($value,true).'</textarea>'; // debug
+
+
+
 			return sprintf("<input name='input_%d' id='%s' type='hidden' class='gform_repeater' value='%s' %s />", $id, $field_id, $value, $tabindex);
+
+
 		}
 	}
 
 	public function get_value_save_entry($value, $form, $input_name, $lead_id, $lead) {
+
+
 		$dataArray = json_decode($value, true);
 		$value = Array();
 
 		for ($i = 1; $i < $dataArray['repeatCount'] + 1; $i++) {
-			$childValue = Array();
-			if( !array_key_exists('children', $dataArray) && !isset($dataArray['children']) ){
-				continue;
-			}
 			foreach ($dataArray['children'] as $field_id=>$field) {
 				$inputData = Array();
 
 				if (array_key_exists('inputs', $field)) {
-					$inputNames = $field['inputs'];
-					$repeatSkips = array();
-
-					if (array_key_exists('conditionalLogic', $field)) {
-						if (is_array($field['conditionalLogic'])) {
-							if (array_key_exists('skip', $field['conditionalLogic'])) {
-								$repeatSkips = $field['conditionalLogic']['skip'];
-							}
-						}
-					}
+					$inputNames = (isset($field['inputs']) ? $field['inputs'] : false);
+					$repeatSkips = (isset($field['conditionalLogic']['skip']) ? $field['conditionalLogic']['skip'] : false);
 
 					if (is_array($repeatSkips)) {
 						if (in_array($i, $repeatSkips) || in_array('all', $repeatSkips)) { continue; }
@@ -400,24 +419,15 @@ class GF_Field_Repeater extends GF_Field {
 								$getInputName = $inputName.'-'.$dataArray['repeaterId'].'-'.$i;
 							}
 
-							$input_field_id_num = explode('.', $inputName);
-							if (count($input_field_id_num) == 2) { $input_field_id_num = $input_field_id_num[1]; } else { $input_field_id_num = null; }
-
 							$getInputData = rgpost(str_replace('.', '_', strval($getInputName)));
 
 							if (!empty($getInputData)) {
 								if (is_array($getInputData)) {
-									$inputCount = 0;
 									foreach ($getInputData as $theInputData) {
-										if (!$input_field_id_num) {
-											$inputCount++;
-											$inputData[$inputCount] = $theInputData;
-										} else {
-											$inputData[$input_field_id_num] = $theInputData;
-										}
+										$inputData[] = $theInputData;
 									}
 								} else {
-									$inputData[1] = $getInputData;
+									$inputData[] = $getInputData;
 								}
 							}
 						}
@@ -463,19 +473,10 @@ class GF_Field_Repeater extends GF_Field {
 				$repeatCount++;
 				$tableContents = '';
 
-				if (empty($value)) { continue; }
-				
 				if (!empty($value) && !is_array($value)) {
 					$save_value = $value;
 					unset($value);
 					$value[0] = $save_value;
-				} elseif (version_compare(phpversion(), '5.3') !== -1) {
-					uksort($value, function($a, $b) use($form){
-						$a_index = GF_Field_Repeater::get_field_index($form, 'id', $a);
-						$b_index = GF_Field_Repeater::get_field_index($form, 'id', $b);
-						if ($a_index > $b_index) { return 1; }
-						return 0;
-					});
 				}
 
 				foreach ($value as $childKey=>$childValue) {
@@ -516,33 +517,28 @@ class GF_Field_Repeater extends GF_Field {
 
 					if (is_array($childValue)) {
 						if (count($childValue) == 1) {
-							$childValueOutput = apply_filters('gform_entry_field_value', reset($childValue), $form['fields'][$field_index], array(), $form);
+							$childValueOutput = $childValue[0];
 						} elseif (count($childValue) > 1) {
-                            if ($form['fields'][$field_index]['type'] == 'date') {
-                                $childValueOutput = implode('/', $childValue);                                
-                            } else {
-                                if ($format == 'html') {
-                                    if ($media == 'email') {
-                                        $childValueOutput = "<ul style=\"list-style:none;margin:0;padding:0;\">\n";
-                                    } else {
-                                        $childValueOutput = "<ul>\n";
-                                    }
-                                }
-    
-                                foreach ($childValue as $childValueData) {
-                                    $childValueData = apply_filters('gform_entry_field_value', $childValueData, $form['fields'][$field_index], array(), $form);
-                                    if ($format == 'html') {
-                                        $childValueOutput .= "<li>".$childValueData."</li>";
-                                    } else {
-                                        $childValueOutput .= $childValueData."\n";
-                                    }
-                                }
-                                
-                                if ($format == 'html') { $childValueOutput .= "</ul>\n"; }
-                            }
+							if ($format == 'html') {
+								if ($media == 'email') {
+									$childValueOutput = "<ul style=\"list-style:none;margin:0;padding:0;\">\n";
+								} else {
+									$childValueOutput = "<ul>\n";
+								}
+							}
+
+							foreach ($childValue as $childValueData) {
+								if ($format == 'html') {
+									$childValueOutput .= "<li>".$childValueData."</li>";
+								} else {
+									$childValueOutput .= $childValueData."\n";
+								}
+							}
+							
+							if ($format == 'html') { $childValueOutput .= "</ul>\n"; }
 						}
 
-						if ($media == 'email') { $tableStyling = ''; } else { $tableStyling = ' class="entry-view-field-value"'; }
+						if ($media == 'email') { $tableStyling = ''; } else { $tableStyling = ' class=\"entry-view-field-value\"'; }
 
 						if ($format == 'html') {
 							$tableContents .= "<tr>\n<td colspan=\"2\"".$tableStyling.">".$childValueOutput."</td>\n</tr>\n";
@@ -567,7 +563,6 @@ class GF_Field_Repeater extends GF_Field {
 
 		if ($count !== 0) {
 			if ($format == 'text') { $output = rtrim($output); }
-			if (GF_REPEATER_DEBUG && $format == 'html') { $output = '<pre style="height:100px;overflow:auto;resize:vertical;">'.print_r($dataArray, true).'</pre>'.$output; }
 			return $output;
 		} else { return ''; }
 	}
@@ -686,11 +681,6 @@ class GF_Field_Repeater extends GF_Field {
 		return false;
 	}
 
-	public static function get_field_id_number($field_id) {
-		$field_id = explode('_', $field_id);
-		return $field_id[2];
-	}
-
 	public static function get_children_parems($form, $children_ids) {
 		foreach($form['fields'] as $key=>$value) {
 			if (in_array($value['id'], $children_ids)) {
@@ -739,40 +729,6 @@ class GF_Field_Repeater extends GF_Field {
 			}
 		}
 		if (!empty($parems)) { return $parems; } else { return false; }
-	}
-
-	public static function field_is_repeater_child($form, $field_id) {
-		if (GF_Field_Repeater::get_field_index($form) === false) { return false; }
-
-		$fieldIsRepeaterChild = false;
-		$repeaterChildren = Array();
-
-		foreach($form['fields'] as $key=>$field) {
-			if ($field->type == 'repeater') {
-				if (is_array($field->repeaterChildren)) { $repeaterChildren = array_merge($repeaterChildren, $field->repeaterChildren); }
-			}
-
-			if (!empty($repeaterChildren)) {
-				if ($field->id == $field_id && in_array($field->id, $repeaterChildren)) {
-					$fieldIsRepeaterChild = true;
-					break;
-				}
-			}
-		}
-
-		return $fieldIsRepeaterChild;
-	}
-
-	public static function set_counter_script($script, $form_id, $field_id, $max_length) {
-		$get_form = GFFormsModel::get_form_meta_by_id($form_id);
-		$form = reset($get_form);
-		$field_id_num = GF_Field_Repeater::get_field_id_number($field_id);
-
-		if (GF_Field_Repeater::field_is_repeater_child($form, $field_id_num)) {
-			$script = '';
-		}
-
-		return $script;
 	}
 }
 GF_Fields::register(new GF_Field_Repeater());

@@ -1,5 +1,3 @@
-**[Looking for contributors!](https://github.com/kodie/gravityforms-repeater/issues/75)**
-
 ![](/assets/icon-256x256.png?raw=true)
 # Gravity Forms Repeater Add-On
 A Gravity Forms add-on that allows specified groups of fields to be repeated by the user.
@@ -57,29 +55,29 @@ You can use Javascript to manipulate the repeater.
 * repeaterChildId works the same way and depends on how many times the repeater has been repeated.
 * These functions will not allow you to repeat more than the set max and unrepeat more than the set min.
 #
-```javascript
-// Repeats the repeater once.
+```
 gfRepeater_repeatRepeater(formId, repeaterId);
+  Repeats the repeater once.
 ```
-```javascript
-// Un-repeats the repeater once. repeaterChildId is optional.
+```
 gfRepeater_unrepeatRepeater(formId, repeaterId, repeaterChildId);
+  Un-repeats the repeater once. repeaterChildId is optional.
 ```
-```javascript
-// Repeats the repeater a number of times.
+```
 gfRepeater_repeatRepeaterTimes(formId, repeaterId, timesX);
+  Repeats the repeater a number of times.
 ```
-```javascript
-// UnRepeats the repeater a number of times.
+```
 gfRepeater_unrepeatRepeaterTimes(formId, repeaterId, timesX);
+  UnRepeats the repeater a number of times.
 ```
-```javascript
-// Repeats or unrepeats the repeater to get it to whatever timesX is.
+```
 gfRepeater_setRepeater(formId, repeaterId, timesX);
+  Repeats or unrepeats the repeater to get it to whatever timesX is.
 ```
-```javascript
-// Selects an element depending on the variables passed. All variables are optional besides formId. inputId also accepts '*' to select all inputs.
+```
 gfRepeater_select(formId, repeaterId, repeatId, childId, inputId);
+  Selects an element depending on the variables passed. All variables are optional besides formId. inputId also accepts '*' to select all inputs.
 ```
 
 ##### Triggers
@@ -105,8 +103,6 @@ gfRepeater_repeaters
             ['paremCount'] - The highest field ID that has had their prepopulate paremeter set.
             ['tabIndex'] - The tabindex that was assigned to the repeater start field and will be assigned to all children.
             ['inputData'] - Contains an array with all of the input names in the repeater.
-            ['startIdNum'] - ID Number of the repeater start field.
-            ['endIdNum'] - ID Number of the repeater end field.
         ['settings'] - Contains the different settings that are set in the form editor.
             ['start'] - The number of times the repeater should be repeated when the form is loaded.
             ['min'] - The minimum number of times the repeater can be repeated.
@@ -137,7 +133,7 @@ gfRepeater_repeaters
 
 ##### Usage Examples
 Repeat the repeater a number of times depending on the value of a drop down field:
-```javascript
+```
 jQuery('#gform_6 #input_6_7').change(function(){
     var attendees = jQuery(this).val();
     gfRepeater_setRepeater(6, 1, attendees);
@@ -145,7 +141,7 @@ jQuery('#gform_6 #input_6_7').change(function(){
 ```
 
 Change the value of a field if the repeater is repeated or un-repeated:
-```javascript
+```
 jQuery('#gform_9').on('gform_repeater_after_repeat gform_repeater_after_unrepeat', function(event, repeaterId, repeatId){
     if (repeaterId == 1) {
         var repeatCount = gfRepeater_repeaters[9][1]['data']['repeatCount'];

@@ -1,23 +1,17 @@
 <?php
+/*
+Plugin Name: Gravity Forms Repeater Add-On
+Plugin URI: https://wordpress.org/plugins/repeater-add-on-for-gravity-forms/
+Description: A Gravity Forms add-on that allows specified groups of fields to be repeated by the user.
+Version: 1.0.10
+Author: Kodie Grantham & Upperdog Development team
+Author URI: http://kodieg.com
+GitHub Plugin URI: https://github.com/kodie/gravityforms-repeater
+GitHub Branch: master
+*/
 
-/**
- * Plugin Name: Gravity Forms Repeater Add-On
- * Plugin URI: https://wordpress.org/plugins/repeater-add-on-for-gravity-forms/
- * Description: A Gravity Forms add-on that allows specified groups of fields to be repeated by the user.
- * Version: 1.1.0-dev14
- * Author: Kodie Grantham
- * Author URI: http://kodieg.com
- * GitHub Plugin URI: https://github.com/kodie/gravityforms-repeater
- * GitHub Branch: development
- * Text Domain: gravityforms-repeater
- * Domain Path: languages
- */
-
-define('GF_REPEATER_VERSION', '1.1.0-dev14');
+define('GF_REPEATER_VERSION', '1.0.9');
 define('GF_REPEATER_PATH', basename(__DIR__).'/'.basename(__FILE__));
-if( !defined('GF_REPEATER_DEBUG') ){
-	define('GF_REPEATER_DEBUG', WP_DEBUG);
-}
 
 add_filter('plugin_row_meta', 'gfrepeater_row_meta', 10, 2);
 function gfrepeater_row_meta($links, $file) {
@@ -37,7 +31,7 @@ if (class_exists("GFForms")) {
 	class GFRepeater extends GFAddOn {
 		protected $_version = GF_REPEATER_VERSION;
 		protected $_min_gravityforms_version = "1.9";
-		protected $_slug = "gravityformsrepeater";
+		protected $_slug = "repeateraddon";
 		protected $_path = GF_REPEATER_PATH;
 		protected $_full_path = __FILE__;
 		protected $_title = "Gravity Forms Repeater Add-On";
@@ -47,12 +41,12 @@ if (class_exists("GFForms")) {
 			$scripts = array(
 				array(
 					"handle"	=> "gf_repeater_js_admin",
-					"src"		=> $this->get_base_url() . "/js/gf-repeater-admin.js",
+					"src"		=> $this->get_base_url() . "/js/gf-repeater-admin.min.js",
 					"version"	=> $this->_version,
 					"deps"		=> array('jquery'),
 					"in_footer"	=> false,
 					"callback"	=> array($this, 'localize_scripts'),
-					"strings"	=> array('page' => rgget('page'), 'debug' => GF_REPEATER_DEBUG),
+					"strings"	=> array('page' => rgget('page')),
 					"enqueue"	=> array(
 						array(
 							"admin_page" => array('form_editor', 'entry_view', 'entry_detail')
